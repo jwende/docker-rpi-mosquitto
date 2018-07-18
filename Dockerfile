@@ -1,4 +1,4 @@
-FROM arm32v7/debian:stretch
+FROM resin/raspberry-pi-debian
 
 ENV DEBIAN_FRONTEND noninteractive
 
