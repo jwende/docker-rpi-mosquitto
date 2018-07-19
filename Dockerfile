@@ -1,4 +1,4 @@
-FROM resin/raspberry-pi-debian
+FROM raspbian/stretch
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -6,21 +6,20 @@ RUN apt-get update && \
     apt-get install -yq \
             apt-transport-https \
             curl \
-	    gnupg \
-	    apt-utils
-	
+            gnupg \
+            apt-utils
 
-RUN curl -s http://repo.mosquitto.org/debian/mosquitto-repo.gpg.key | apt-key add -
-RUN curl -s -o /etc/apt/sources.list.d/mosquitto-jessie.list http://repo.mosquitto.org/debian/mosquitto-stretch.list
-RUN apt-get update && \
-    apt-get install -yq \
-            mosquitto
+RUN sudo apt-get install -yq mosquitto mosquitto-clients
 
 RUN adduser --system --disabled-password --disabled-login mosquitto
 
-COPY config /mqtt/config
+COPY config /mosquitto/config
 
-VOLUME ["/mqtt/config", "/mqtt/data"]
+RUN mkdir /mosquitto/log
+RUN mkdir /mosquitto/data
+
+
+VOLUME ["/mosquitto/config", "/mosquitto/data", "/mosquitto/log"]
 
 EXPOSE 1883 9001
-CMD ["/usr/sbin/mosquitto", "-c", "/mqtt/config/mosquitto.conf"]
+CMD ["/usr/sbin/mosquitto", "-c", "/mosquitto/config/mosquitto.conf"]
